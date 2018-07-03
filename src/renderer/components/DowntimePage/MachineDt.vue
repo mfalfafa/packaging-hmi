@@ -14,12 +14,16 @@
           <tr>
             <!-- ===== Machine Name ===== -->
             <td align="center">
-              <span class="badge badge-pill badge-dark"><h3>{{ machinename }}</h3></span>
+              <!-- Get machine name -->
+              <mach-list :machineList='machineList'></mach-list>
             </td>
+
             <!-- ===== Downtime Status ===== -->
             <td align="center">
-              <downtime-counter :machineid="machineid" :machinename="machinename" @update-dt="getAllDt"></downtime-counter>
+              <!-- Get Downtime status from DB -->
+              <stat-list :statusList='statusList'></stat-list>
             </td>
+
             <!-- ===== queue Downtime ===== -->
             <td class="left-border">
               <downtime-list :listdt="listDt"></downtime-list>
@@ -31,27 +35,43 @@
 </template>
 
 <script>
+    // Import Vue Components
     import DowntimeCounter from './MachineDt/DowntimeCounter'
-    import DowntimeList from './MachineDt/DowntimeList'
+    // import DowntimeList from './MachineDt/DowntimeList'
+    import machList from './MachineDt/machineList'
+    import statList from './MachineDt/statusList'
     
     export default{
       name: 'machine-dt',
-      components: { DowntimeCounter, DowntimeList },
-      props: ['machineid', 'machinename'],
+      // Registering Vue Components
+      components: { DowntimeCounter, machList, statList },
+      // Passing data using props from parent component
+      props: ['machineList', 'statusList', 'dtList'],
+      // data property of vue
       data: () => ({
         listDt: []
       }),
+      // executed after mounting proccess
       mounted (){
+        // Call a method
         this.getAllDt()
       },
+      // Methods property
       methods: {
         getAllDt: function (mid) {
+          // HTTP get request with angular JS
+          // Get fdowntimelist based on machineid from url pointed to server
           this.$http.get('/device/getdtlist/' + this.machineid).then(ress => {
+            // copy data to listDT
             this.listDt = ress.data
           }).catch(error => {
+            // error log
             console.log('error data get dt', error.config)
           })
         }
       }
     }
 </script>
+
+<style>
+</style>

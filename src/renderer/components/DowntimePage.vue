@@ -24,52 +24,58 @@
         </div>
       </div>
 
-      <!-- <router-link to="/logout">Logout</router-link> -->
-      <!-- <div class="row">
-        <div class="col-sm-8">
-          <router-link :class="['btn-machine', 'btn', 'btn-outline-primary', 'btn-sm']" to="/konfigurasi" v-if="$store.state.Login.role === 1">Konfigurasi</router-link>
-        </div>
-
-        <div class="col-sm-4 text-right">
-          <button type="button" :class="['btn-machine', 'btn', 'btn-outline-primary', 'btn-sm', {'active-machine': machineShow[ind]}]" v-for="(mesin,ind) in mesinList" :key="ind" @click="showMachine(ind)">{{ mesin.name }}</button>
-        </div>
-      </div> -->
-
-      <div class="col-sm-4 text-right">
-          <button type="button" :class="['btn-machine', 'btn', 'btn-outline-primary', 'btn-sm', {'active-machine': machineShow[ind]}]" v-for="(mesin,ind) in mesinList" :key="ind" @click="showMachine(ind)">{{ mesin.name }}</button>
-        </div>
+      <machine-dt :machineList='mesinList' :statusList='statusList'></machine-dt>
 
       <div class="row">
-        <machine-dt v-for="(mesin,ind) in mesinList" :key="ind" :machineid="mesin.id" :machinename="mesin.name" v-show="machineShow[ind]"></machine-dt>
+        <!-- <machine-dt v-for="(mesin,ind) in mesinList" :key="ind" :machineid="mesin.id" :machinename="mesin.name" :machineList='mesinList' v-show="machineShow[ind]"></machine-dt> -->
       </div>
     </div>
 </template>
 
 <script>
+    // Import vue components
     import MachineDt from './DowntimePage/MachineDt'
 
     export default {
       name: 'donwtime-page',
-      components: { MachineDt },
+      // Registering Child Component
+      components: { MachineDt},
+      // Data
       data: () => ({
+        // Get Main List from DB
         mesinList: [],
-        machineShow: []
+        // Get status List from DB
+        statusList:[
+          {id:1, status: false},
+          {id:2, status: true},
+          {id:3, status: false},
+          {id:4, status: true}
+        ],
+        machineShow: [],
       }),
+      // Executed after mounting proccess
       mounted () {
         this.loadMachine()
-        console.log(this.$store.state.Machines.machines)
+        // console.log(this.$store.state.Machines.machines)
       },
+      // Methods
       methods: {
         showMachine: function (ind) {
+          // Showing all machines with disable (false) state
           for (let i = 0; i < this.mesinList.length; i++) {
             this.$set(this.machineShow, i, false)
           }
+          // Showing just machine 0 with enable (true) state
           this.$set(this.machineShow, ind, true)
         },
+        // Load all machines
         loadMachine: function () {
+          // Saving all machines to mesinList
           this.mesinList = this.$store.state.Machines.machines
+          // Enable (true) state for machine 0
           this.showMachine(0)
-          console.log(this.mesinList);
+          
+          // console.log(this.mesinList.name);
         }
       }
     }
